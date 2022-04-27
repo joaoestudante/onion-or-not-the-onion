@@ -67,7 +67,7 @@ module.exports = configure(function (/* ctx */) {
 
       // rebuildCache: true, // rebuilds Vite/linter/etc cache on startup
 
-      // publicPath: '/',
+      publicPath: 'onion-or-not-the-onion',
       // analyze: true,
       // env: {},
       // rawDefine: {}
