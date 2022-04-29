@@ -2,8 +2,8 @@
   <q-page padding class="flex flex-center" style="padding: 15pt">
     <q-header>
       <q-toolbar>
-        <q-toolbar-title >Which headline is from The Onion?</q-toolbar-title>
-        <q-btn icon="share" label="Share this combination" flat @click="doShare"></q-btn>
+        <q-toolbar-title>Which one is from The Onion?</q-toolbar-title>
+        <q-btn icon="share" label="" flat @click="doShare"></q-btn>
 
       </q-toolbar>
     </q-header>
@@ -134,15 +134,12 @@ function doShare() {
   //navigator.clipboard.writeText(textToShare);
   copyToClipboard(textToShare).then( () => {
       $q.notify({
-        message: 'Copied to clipboard!',
+        message: 'Copied headlines to clipboard!',
         timeout: 800
       });
     }).catch(() => {
       console.log("error");
   })
-
-
-
 }
 
 function populateTitles() {
