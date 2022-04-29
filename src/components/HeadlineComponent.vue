@@ -1,5 +1,5 @@
 <template>
-  <div class="card-holder">
+  <div class="card-holder-f">
     <q-card key="first" v-show="!props.guessMade" ref="card" class="headline-card cursor-pointer flex flex-center" @click="select">
       <q-tooltip anchor="top middle" self="bottom middle" :offset="[10, 10]">
         <strong>Select this as TheOnion source</strong>
@@ -73,7 +73,7 @@ defineExpose({changeColorToDefault, changeColorToSelected, changeColorToCorrect,
 <style scoped>
 .headline-card, .headline-url-card {
   width: 100%;
-  min-height: 150pt;
+  height: 100%;
   transition: all 0.2s ease-in-out;
   word-wrap:break-word;
 }
@@ -102,7 +102,7 @@ defineExpose({changeColorToDefault, changeColorToSelected, changeColorToCorrect,
   color: #000000
 }
 
-.card-holder {
+.card-holder-f {
   width: 100%;
 }
 

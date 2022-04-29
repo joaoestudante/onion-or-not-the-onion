@@ -1,43 +1,39 @@
 <template>
-  <q-page padding class="flex flex-center">
-    <div class="row justify-between items-center ">
-      <p class="text-h4">Which headline is from The Onion?</p>
-      <q-btn icon="share" label="Share this combination" @click="doShare"></q-btn>
-    </div>
-      <div class="row justify-evenly items-center" style="width: 100%">
+  <q-page padding class="flex flex-center" style="padding: 15pt">
+    <q-header>
+      <q-toolbar>
+        <q-toolbar-title >Which headline is from The Onion?</q-toolbar-title>
+        <q-btn icon="share" label="Share this combination" flat @click="doShare"></q-btn>
+
+      </q-toolbar>
+    </q-header>
+      <div class="row justify-evenly items-center q-gutter-md" style="margin-top: 20pt">
         <div class="col-11 col-md-5 items-center flex flex-center">
             <HeadlineComponent v-show="firstTitle" ref="firstHeadline" class="headline" id="first" :title="firstTitle" :url="firstUrl" :guessMade="guessMade" @clicked="selectComponent($event)"></HeadlineComponent>
-            <q-circular-progress
-              v-show="!firstTitle"
-              indeterminate
-              size="150pt"
-              color="primary"
-            />
         </div>
         <div class="col-11 col-md-5 flex flex-center">
             <HeadlineComponent v-show="secondTitle" ref="secondHeadline" class="headline" id="second" :title="secondTitle" :url="secondUrl" :guessMade="guessMade" @clicked="selectComponent($event)"></HeadlineComponent>
-            <q-circular-progress
-              v-show="!secondTitle"
-              indeterminate
-              size="150pt"
-              color="primary"
-              class="q-ma-md"
-            />
+        </div>
+        <div class="col-11 col-md-5 flex flex-center">
+        <q-circular-progress
+          indeterminate
+          v-show="!firstTitle"
+          color="primary"
+          size="150pt"
+        />
         </div>
       </div>
-    <div class="row">
-      <q-btn label="Check" v-show="!guessMade" class="full-width" :disabled="guessMade || !selected" push @click="checkGuess"></q-btn>
-      <q-btn label="Next" icon-right="forward" v-show="guessMade" class="full-width" @click="nextGuess"></q-btn>
+    <div class="row flex flex-center" style="margin-top: 30pt" v-show="firstTitle">
+      <q-btn label="Check" icon-right="help" v-show="!guessMade" size="1.3rem" flat :disabled="guessMade || !selected" @click="checkGuess"></q-btn>
+      <q-btn label="Next" icon-right="forward" v-show="guessMade" size="1.3rem" flat @click="nextGuess"></q-btn>
     </div>
-      <div class="row justify-evenly">
-      </div>
   </q-page>
 </template>
 
 <script setup lang="ts">
 import {onBeforeMount, ref} from 'vue';
 import { getTheOnionRandom, getNotTheOnionRandom } from '../services/reddit-api-service';
-import { useQuasar } from 'quasar'
+import { useQuasar, copyToClipboard } from 'quasar'
 
 import HeadlineComponent from 'components/HeadlineComponent.vue';
 
@@ -81,15 +77,21 @@ function checkGuess() {
   if (selected.value == theOnion.value) {
     dismiss = $q.notify({
       type: 'positive',
-      position: 'top',
-      message: 'Correct!'
+      position: 'bottom',
+      message: 'Correct!',
+      actions: [
+        {label: 'Dismiss', color: 'white', handler: () => { /* ... */ }}
+      ]
     });
 
   } else {
     dismiss = $q.notify({
       type: 'negative',
+      position: 'bottom',
       message: 'Wrong!',
-      position: 'top',
+      actions: [
+        {label: 'Dismiss', color: 'white', handler: () => { /* ... */ }}
+      ]
     });
     if (firstTitle.value == selected.value) {
       console.log('First title was the one chosen, but it is wrong...');
@@ -129,11 +131,18 @@ function cleanupCards() {
 
 function doShare() {
   const textToShare = 'Which headline is from The Onion? \n⚫️ ' + firstTitle.value + '\n⚫ ' + secondTitle.value;
-  navigator.clipboard.writeText(textToShare);
-  $q.notify({
-    message: 'Copied to clipboard!',
-    timeout: 800
-  });
+  //navigator.clipboard.writeText(textToShare);
+  copyToClipboard(textToShare).then( () => {
+      $q.notify({
+        message: 'Copied to clipboard!',
+        timeout: 800
+      });
+    }).catch(() => {
+      console.log("error");
+  })
+
+
+
 }
 
 function populateTitles() {
