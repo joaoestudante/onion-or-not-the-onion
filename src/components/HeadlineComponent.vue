@@ -56,7 +56,7 @@ function changeColorToSelected() {
 }
 function changeColorToDefault() {
   card.value.$el.classList.remove('bg-primary', 'text-white');
-  urlCard.value.$el.classList.remove('selected-card');
+  urlCard.value.$el.classList.remove('selected-card', 'wrong-answer');
 
 }
 function changeColorToCorrect() {
@@ -74,15 +74,19 @@ defineExpose({changeColorToDefault, changeColorToSelected, changeColorToCorrect,
 .headline-card, .headline-url-card {
   width: 100%;
   min-height: 150pt;
+  transition: all 0.2s ease-in-out;
+  word-wrap:break-word;
 }
 
 .headline-card:hover {
-  background: #006b3a;
+  background-color: #006b3a;
   color: white;
+  transform: scale(1.05);
 }
 .selected-card {
   background: #006b3a;
   color: white;
+  word-wrap:break-word;
 }
 
 .selected-card > .section > a {
@@ -90,7 +94,7 @@ defineExpose({changeColorToDefault, changeColorToSelected, changeColorToCorrect,
 }
 
 .wrong-answer {
-  background-color: #ec8b8b;
+  border: 1px solid #c2302d;
   opacity: 0.8;
 }
 

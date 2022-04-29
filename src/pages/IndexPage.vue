@@ -1,9 +1,10 @@
 <template>
   <q-page padding class="flex flex-center">
-    <div class="row">
+    <div class="row justify-between items-center ">
       <p class="text-h4">Which headline is from The Onion?</p>
+      <q-btn icon="share" label="Share this combination" @click="doShare"></q-btn>
     </div>
-      <div class="row justify-evenly items-center q-gutter-y-xl" style="width: 100%">
+      <div class="row justify-evenly items-center" style="width: 100%">
         <div class="col-11 col-md-5 items-center flex flex-center">
             <HeadlineComponent v-show="firstTitle" ref="firstHeadline" class="headline" id="first" :title="firstTitle" :url="firstUrl" :guessMade="guessMade" @clicked="selectComponent($event)"></HeadlineComponent>
             <q-circular-progress
@@ -29,7 +30,6 @@
       <q-btn label="Next" icon-right="forward" v-show="guessMade" class="full-width" @click="nextGuess"></q-btn>
     </div>
       <div class="row justify-evenly">
-        <q-btn label="Share this combination" @click="doShare"></q-btn>
       </div>
   </q-page>
 </template>
@@ -51,6 +51,7 @@ const firstHeadline = ref(null);
 const secondHeadline = ref(null);
 const guessMade = ref(false);
 const $q = useQuasar();
+let dismiss;
 
 function selectComponent(title: string) {
   if (selected.value != '') { // Have to change the color of what is selected
@@ -78,35 +79,44 @@ function checkGuess() {
   // firstTitle.value = firstUrl.value;
   // secondTitle.value = secondUrl.value;
   if (selected.value == theOnion.value) {
-    $q.notify({
+    dismiss = $q.notify({
       type: 'positive',
       position: 'top',
       message: 'Correct!'
     });
 
   } else {
-    $q.notify({
+    dismiss = $q.notify({
       type: 'negative',
       message: 'Wrong!',
       position: 'top',
-    })
+    });
+    if (firstTitle.value == selected.value) {
+      console.log('First title was the one chosen, but it is wrong...');
+      firstHeadline.value.changeColorToWrong();
+    } else if (secondTitle.value == selected.value) {
+      console.log('Second title was the one chosen, but it is wrong...');
+      secondHeadline.value.changeColorToWrong();
+    } else {
+      console.log('????');
+    }
   }
-  secondHeadline.value.changeColorToDefault();
-  firstHeadline.value.changeColorToDefault();
+  // secondHeadline.value.changeColorToDefault();
+  // firstHeadline.value.changeColorToDefault();
   if (firstTitle.value == theOnion.value) { // Highlight the first card, because it's the correct one
     firstHeadline.value.changeColorToCorrect();
-    secondHeadline.value.changeColorToWrong();
-  }
-  if (secondTitle.value == theOnion.value) {
+  } else if (secondTitle.value == theOnion.value) {
     secondHeadline.value.changeColorToCorrect();
-    firstHeadline.value.changeColorToWrong();
   }
+
+
 }
 
 function nextGuess() {
   guessMade.value = false;
   cleanupCards();
   populateTitles();
+  dismiss();
 }
 
 function cleanupCards() {
