@@ -1,5 +1,5 @@
 <template>
-  <q-page padding class="flex flex-center" style="padding: 15pt">
+  <q-page padding class="flex" style="padding: 15pt">
     <q-header>
       <q-toolbar>
         <q-toolbar-title>Which one is from The Onion?</q-toolbar-title>
@@ -7,7 +7,10 @@
 
       </q-toolbar>
     </q-header>
-      <div class="row justify-evenly items-center q-gutter-md" style="margin-top: 20pt">
+    <div class="row">
+      <ScoreComponent :totalGuesses="totalGuesses" :correctGuesses="correctGuesses"></ScoreComponent>
+    </div>
+      <div class="row justify-evenly items-center q-gutter-md">
         <div class="col-11 col-md-5 items-center flex flex-center">
             <HeadlineComponent v-show="firstTitle" ref="firstHeadline" class="headline" id="first" :title="firstTitle" :url="firstUrl" :guessMade="guessMade" @clicked="selectComponent($event)"></HeadlineComponent>
         </div>
@@ -31,10 +34,12 @@
 
 <script setup lang="ts">
 import {onBeforeMount, ref} from 'vue';
+import type { Ref } from 'vue'
 import { getTheOnionRandom, getNotTheOnionRandom } from '../services/reddit-api-service';
-import { useQuasar, copyToClipboard } from 'quasar'
+import { useQuasar, copyToClipboard, LocalStorage } from 'quasar'
 
 import HeadlineComponent from 'components/HeadlineComponent.vue';
+import ScoreComponent from 'components/ScoreComponent.vue';
 
 let firstTitle = ref('');
 let secondTitle = ref('');
@@ -46,6 +51,8 @@ const firstHeadline = ref(null);
 const secondHeadline = ref(null);
 const guessMade = ref(false);
 const $q = useQuasar();
+let correctGuesses = ref($q.localStorage.getItem('correctGuesses')) as Ref<number | null> ;
+let totalGuesses = ref($q.localStorage.getItem('totalGuesses')) as Ref<number | null>;
 let dismiss;
 
 function selectComponent(title: string) {
@@ -84,6 +91,19 @@ function checkGuess() {
         {label: 'Dismiss', color: 'white', handler: () => { /* ... */ }}
       ]
     });
+    try {
+      if (correctGuesses.value != null) {
+        correctGuesses.value += 1;
+        $q.localStorage.set('correctGuesses', correctGuesses);
+      }
+      else {
+        correctGuesses.value = 1;
+        $q.localStorage.set('correctGuesses', 1);
+      }
+    }
+    catch (e) {
+      console.log('Error interfacing with local storage.');
+    }
 
   } else {
     dismiss = $q.notify({
@@ -95,14 +115,24 @@ function checkGuess() {
       ]
     });
     if (firstTitle.value == selected.value) {
-      console.log('First title was the one chosen, but it is wrong...');
       firstHeadline.value.changeColorToWrong();
     } else if (secondTitle.value == selected.value) {
-      console.log('Second title was the one chosen, but it is wrong...');
       secondHeadline.value.changeColorToWrong();
     } else {
       console.log('????');
     }
+  }
+  try {
+    if (totalGuesses.value != null) {
+      totalGuesses.value += 1;
+      $q.localStorage.set('totalGuesses', totalGuesses);
+    }
+    else {
+      totalGuesses.value = 1;
+      $q.localStorage.set('totalGuesses', 1);
+    }
+  } catch (e) {
+    console.log('Error interfacing with local storage.');
   }
   // secondHeadline.value.changeColorToDefault();
   // firstHeadline.value.changeColorToDefault();
