@@ -23,9 +23,8 @@
         />
         </div>
       </div>
-    <div class="row flex flex-center" style="margin-top: 30pt" v-show="firstTitle">
-      <q-btn label="Check" icon-right="help" v-show="!guessMade" size="1.3rem" flat :disabled="guessMade || !selected" @click="checkGuess"></q-btn>
-      <q-btn label="Next" icon-right="forward" v-show="guessMade" size="1.3rem" flat @click="nextGuess"></q-btn>
+    <div class="row flex flex-center" style="margin-top: 30pt" :style="{visibility: guessMade ? 'visible' : 'hidden'}">
+      <q-btn label="Next" icon-right="forward" size="1.3rem" flat @click="nextGuess"></q-btn>
     </div>
   </q-page>
 </template>
@@ -67,6 +66,7 @@ function selectComponent(title: string) {
     }
   }
   selected.value = title;
+  checkGuess();
 
 }
 
@@ -78,6 +78,7 @@ function checkGuess() {
     dismiss = $q.notify({
       type: 'positive',
       position: 'bottom',
+      color: 'primary',
       message: 'Correct!',
       actions: [
         {label: 'Dismiss', color: 'white', handler: () => { /* ... */ }}

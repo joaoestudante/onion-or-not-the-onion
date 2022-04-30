@@ -1,32 +1,33 @@
 <template>
   <div class="card-holder-f">
-    <q-card key="first" v-show="!props.guessMade" ref="card" class="headline-card cursor-pointer flex flex-center" @click="select">
-      <q-tooltip anchor="top middle" self="bottom middle" :offset="[10, 10]">
-        <strong>Select this as TheOnion source</strong>
-      </q-tooltip>
-
+    <q-card key="first" ref="card" class="headline-card headline-card-hover cursor-pointer flex flex-center" @click="select">
         <q-card-section class="section">
           <div class="text-h5">{{ props.title }}</div>
         </q-card-section>
 
-      <q-card-section class="section" :style="{visibility: props.guessMade ? 'visible' : 'hidden'}">
-          <a target="_blank" rel="noopener noreferrer" :href="props.url" class="href text-h6">{{props.url}}</a>
-        </q-card-section>
+        <q-card-actions class="section link" align="center" >
+          <q-btn flat target="_blank" rel="noopener noreferrer" :disable="!props.guessMade" :href="props.url" class="href text-h6">
+            <span v-show="props.guessMade">{{urlDomain()}}</span>
+            <span v-show="!props.guessMade">Hidden source</span>
+          </q-btn>
+        </q-card-actions>
     </q-card>
 
-    <q-card key="second" v-show="props.guessMade" ref="urlCard" class="headline-url-card flex flex-center" @click="select">
 
-      <q-card-section class="section">
-        <div class="text-h5">{{ props.title }}</div>
-      </q-card-section>
 
-      <q-separator />
+<!--    <q-card key="second" v-show="props.guessMade" ref="urlCard" class="headline-url-card flex flex-center" @click="select">-->
 
-      <q-card-section class="section">
-        <a target="_blank" rel="noopener noreferrer" :href="props.url" class="href text-h6">{{props.url}}</a>
-      </q-card-section>
+<!--      <q-card-section class="section">-->
+<!--        <div class="text-h5">{{ props.title }}</div>-->
+<!--      </q-card-section>-->
 
-    </q-card>
+<!--      <q-separator />-->
+
+<!--      <q-card-section class="section">-->
+<!--        <a target="_blank" rel="noopener noreferrer" :href="props.url" class="href text-h6">{{props.url}}</a>-->
+<!--      </q-card-section>-->
+
+<!--    </q-card>-->
 
     <!--  <q-card v-show="props.guessMade" ref="card-url" class="card-url flex flex-center" @click="select">-->
 <!--    <q-card-section>-->
@@ -40,66 +41,73 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 
 const props = defineProps(['title', 'url', 'guessMade'])
 const emit = defineEmits(['clicked']);
 const card = ref(null);
-const urlCard = ref(null);
+
+watch(() => props.guessMade, (guess, prevGuess) => {
+  if (guess) {
+    card.value.$el.classList.remove('headline-card-hover', 'cursor-pointer');
+  } else {
+    card.value.$el.classList.add('headline-card-hover', 'cursor-pointer');
+  }
+});
 
 function select() {
-  changeColorToSelected();
-  emit('clicked', props.title);
+  if (!props.guessMade)
+    emit('clicked', props.title);
 }
-function changeColorToSelected() {
-  card.value.$el.classList.add('bg-primary', 'text-white');
-}
-function changeColorToDefault() {
-  card.value.$el.classList.remove('bg-primary', 'text-white');
-  urlCard.value.$el.classList.remove('selected-card', 'wrong-answer');
 
+function changeColorToDefault() {
+  card.value.$el.classList.remove('correct-answer', 'wrong-answer');
 }
 function changeColorToCorrect() {
-  urlCard.value.$el.classList.add('selected-card');
+  card.value.$el.classList.add('correct-answer');
 }
-
 function changeColorToWrong() {
-  urlCard.value.$el.classList.add('wrong-answer');
+  card.value.$el.classList.add('wrong-answer');
 }
 
-defineExpose({changeColorToDefault, changeColorToSelected, changeColorToCorrect, changeColorToWrong})
+function urlDomain() {
+  if (props.url === '') {
+    setTimeout(urlDomain, 200);
+    return;
+  }
+  return (new URL(props.url)).hostname.replace('www.', '');
+}
+
+
+defineExpose({changeColorToDefault, changeColorToCorrect, changeColorToWrong})
 </script>
 
 <style scoped>
-.headline-card, .headline-url-card {
+.headline-card {
   width: 100%;
   height: 100%;
   transition: all 0.2s ease-in-out;
   word-wrap:break-word;
 }
 
-.headline-card:hover {
-  background-color: #006b3a;
-  color: white;
-  transform: scale(1.05);
-}
-.selected-card {
-  background: #006b3a;
-  color: white;
-  word-wrap:break-word;
+.headline-card-hover:hover {
+  border: 2px solid #006b3a;
 }
 
-.selected-card > .section > a {
-  color: limegreen
+.correct-answer {
+  border: 2px solid #006b3a;
+  word-wrap:break-word;
+  transform: scale(1.07)
+}
+
+.correct-answer > .link {
+  color: #006b3a;
 }
 
 .wrong-answer {
-  border: 1px solid #c2302d;
-  opacity: 0.8;
-}
-
-.wrong-answer > .section > a {
-  color: #000000
+  border: 2px solid #c2302d;
+  animation: shake 0.32s cubic-bezier(.36,.07,.19,.97) both;
+  transform: translate3d(0, 0, 0);
 }
 
 .card-holder-f {
@@ -108,6 +116,24 @@ defineExpose({changeColorToDefault, changeColorToSelected, changeColorToCorrect,
 
 .section {
   width: 100%;
+}
+
+@keyframes shake {
+  10%, 90% {
+    transform: translate3d(-1px, 0, 0);
+  }
+
+  20%, 80% {
+    transform: translate3d(2px, 0, 0);
+  }
+
+  30%, 50%, 70% {
+    transform: translate3d(-4px, 0, 0);
+  }
+
+  40%, 60% {
+    transform: translate3d(4px, 0, 0);
+  }
 }
 
 </style>
