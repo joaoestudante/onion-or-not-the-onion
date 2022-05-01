@@ -1,5 +1,5 @@
 <template>
-<p class="text-h6">Correctly identified: {{Math.round(correctGuesses*100/totalGuesses)}} % </p>
+<p class="text-h6">Correctly identified: {{Math.round(props.correctGuesses*100/props.totalGuesses)}} % </p>
 </template>
 
 <script setup>
