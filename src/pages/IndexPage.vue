@@ -52,15 +52,12 @@
     <q-header>
 
       <q-toolbar>
-        <q-toolbar-title>Which one is from The Onion?</q-toolbar-title>
+        <q-toolbar-title>Which is from The Onion?</q-toolbar-title>
         <q-btn icon="share" label="" flat @click="doShare"></q-btn>
         <q-btn icon="leaderboard" label="" flat @click="icon = true" />
       </q-toolbar>
 
     </q-header>
-    <div class="row">
-      <ScoreComponent :totalGuesses="totalGuesses" :correctGuesses="correctGuesses"></ScoreComponent>
-    </div>
       <div class="row justify-evenly items-center q-gutter-md">
         <div class="col-11 col-md-5 items-center flex flex-center">
             <HeadlineComponent v-show="firstTitle" ref="firstHeadline" class="headline" id="first" :title="firstTitle" :url="firstUrl" :guessMade="guessMade" @clicked="selectComponent($event)"></HeadlineComponent>
@@ -106,7 +103,7 @@ let correctGuesses = ref(0);
 let totalGuesses = ref(0);
 let largestStreak = ref(0);
 let currentStreak = ref(0);
-let previousGuessIsCorrect = false;
+let previousGuessIsCorrect = true;
 
 function selectComponent(title: string) {
   if (selected.value != '') { // Have to change the color of what is selected
@@ -234,7 +231,7 @@ function doShare() {
         timeout: 800
       });
     }).catch(() => {
-      console.log("error");
+      console.log('error');
   })
 }
 
