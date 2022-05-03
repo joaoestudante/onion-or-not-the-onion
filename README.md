@@ -2,18 +2,21 @@
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-  <a href="https://github.com/github_username/repo_name">
-    <img src="images/logo.png" alt="Logo" width="80" height="80">
-  </a>
+
+[//]: # (  <a href="https://github.com/github_username/repo_name">)
+
+[//]: # (    <img src="images/logo.png" alt="Logo" width="80" height="80">)
+
+[//]: # (  </a>)
 
 <h3 align="center">Onion, or NotTheOnion?</h3>
 
   <p align="center">
     A simple website where your goal is to guess if a headline comes from The Onion or not.
     <br />
-    <a href="https://github.com/github_username/repo_name/issues">Report Bug</a>
+    <a href="https://github.com/joaoestudante/onion-or-not-the-onion/issues/new?assignees=joaoestudante&labels=bug&template=bug_report.md&title=%5BBUG%5D">Report Bug</a>
     ·
-    <a href="https://github.com/github_username/repo_name/issues">Request Feature</a>
+    <a href="https://github.com/joaoestudante/onion-or-not-the-onion/issues/new?assignees=joaoestudante&labels=enhancement&template=feature_request.md&title=%5BFEAT%5D">Request Feature</a>
   </p>
 </div>
 
